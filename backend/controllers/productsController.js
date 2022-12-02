@@ -1,5 +1,5 @@
 const Product = require('../models/productModel')
-const inValidRecordError = require('../utils/errorhandler')
+const responseError = require('../utils/errorhandler')
 const asyncErrorHandler = require('../utils/asyncErrorHandler')
 const ApiFeatures = require('../utils/apifeatures')
 
@@ -7,6 +7,11 @@ const productFunctions = {
 
     // Create Product -- Admin Route
     createProduct : asyncErrorHandler(async(req , res) => {
+        req.body.author = req.user.id
+        // req.body.author ki value me change ker rha hun
+        // hum middlewares mein req.user se logged in user findout ker chuke hein
+        // to usi loggedin user ki id me req.body.author ko assign ker rha hun
+        
         const product = new Product(req.body)
         await product.save();
 
@@ -39,7 +44,7 @@ const productFunctions = {
             let product = await Product.findById(req.params.id)
 
             if(!product){
-                return next(new inValidRecordError("Product Not Found" , 404))
+                return next(new responseError("Product Not Found" , 404))
             }
 
             res.status(200).json({
@@ -52,7 +57,7 @@ const productFunctions = {
 
         let product = await Product.findById(req.params.id)
         if(!product){
-            return next(new inValidRecordError("Product not updated" , 500))
+            return next(new responseError("Product not updated" , 500))
         }
 
         product = await Product.findByIdAndUpdate(req.params.id , req.body , {new:true , runValidators:true , useFindAndModify:false})
@@ -67,7 +72,7 @@ const productFunctions = {
         let product = await Product.findById(req.params.id)
 
         if(!product){
-            return next(new inValidRecordError("Product Not Found and Deleted" , 500))
+            return next(new responseError("Product Not Found and Deleted" , 500))
         }
         
         await product.remove()

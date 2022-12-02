@@ -1,4 +1,4 @@
-const tokenAndCookie = (user , statusCode , response) => {
+const tokenAndCookie = (user , statusCode , response , req) => {
     const token = user.getJWTWEBTOKEN()
 
     const options = {
