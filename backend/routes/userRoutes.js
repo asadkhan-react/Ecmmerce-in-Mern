@@ -8,4 +8,8 @@ router.route('/login').post(Users.loginUser)
 
 router.route('/logout').post(Users.loggedOut)
 
+router.route('/forgot').post(Users.forgot)
+
+router.route('/reset/:token').put(Users.reset)
+
 module.exports = router
