@@ -8,9 +8,6 @@ const productFunctions = {
     // Create Product -- Admin Route
     createProduct : asyncErrorHandler(async(req , res) => {
         req.body.author = req.user.id
-        // req.body.author ki value me change ker rha hun
-        // hum middlewares mein req.user se logged in user findout ker chuke hein
-        // to usi loggedin user ki id me req.body.author ko assign ker rha hun
         
         const product = new Product(req.body)
         await product.save();
@@ -40,6 +37,7 @@ const productFunctions = {
         })
     }) ,
 
+    // -- Admin Route
     getSingleProduct : asyncErrorHandler(async( req , res , next) => {
             let product = await Product.findById(req.params.id)
 
@@ -53,6 +51,7 @@ const productFunctions = {
             })
     }),
 
+    // -- Admin Route
     updateProduct : asyncErrorHandler(async(req , res , next) => {
 
         let product = await Product.findById(req.params.id)
@@ -68,6 +67,7 @@ const productFunctions = {
         })
     }) ,
 
+    // -- Admin Route
     deleteProduct : asyncErrorHandler(async(req , res , next) => {
         let product = await Product.findById(req.params.id)
 
@@ -81,7 +81,14 @@ const productFunctions = {
             message_success : true , 
             message : "Product Deleted Successfully"
         })
+    }) , 
+
+    // Create New Review or Update the Review
+
+    createProductReview : asyncErrorHandler(async(req , res , next) =>{
+        
     })
+
 }
 
 module.exports = productFunctions

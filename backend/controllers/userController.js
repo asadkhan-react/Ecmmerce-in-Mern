@@ -120,8 +120,127 @@ const userFunctions = {
         await user.save()
         
         tokenCookieResponse(user , 200 , res)
-    })
+    }) ,
 
+    userDetails : asyncErrorHandler(async(req , res , next) => {
+
+        const user = await Users.findById(req.user.id)
+
+        res.status(200).json({
+            message : true ,
+            user
+        })
+
+    }) ,
+
+    updateUserPassword : asyncErrorHandler(async(req , res , next) => {
+        
+        const user = await Users.findById(req.user.id).select("+password")
+
+        const matchPassword = await user.comparePassword(req.body.oldPassword)
+
+        if(!matchPassword){
+            return next(new apiErrorHandling("Old Password is incorrect" , 400))
+        }
+
+        if(req.body.newPassword !== req.body.confirmPassword){
+            return next(new apiErrorHandling("Password does not match" , 400))
+        }
+
+        user.password = req.body.newPassword
+        
+        await user.save()
+
+        tokenCookieResponse(user , 200 , res)
+    }) ,
+
+    updateProfile : asyncErrorHandler(async(req , res , next) => {
+        
+        const newUserData = {
+            name : req.body.name ,
+            email : req.body.email
+        }
+
+        const user = await Users.findByIdAndUpdate(req.user.id , newUserData , {
+            new : true ,
+            runValidators : true ,
+            useFindAndModify : false
+        })
+
+        res.status(200).json({
+            success : true , 
+            user
+        })
+
+    }) ,
+
+    // for Admin
+    getAllUsers : asyncErrorHandler(async(req , res , next)=>{
+
+        const users = await Users.find()
+
+        res.status(200).json({
+            success : true ,
+            users
+        })
+    }) , 
+
+    // for Admin
+    getSignleUser : asyncErrorHandler(async(req , res , next)=>{
+
+        const user = await Users.findById(req.params.id)
+
+        if(!user){
+            return next(new apiErrorHandling(`User does not exist with ${req.params.id}`))
+        }
+
+        res.status(200).json({
+            success : true ,
+            user
+        })
+    }) ,
+
+    // for Admin
+    updateUserRole : asyncErrorHandler(async(req , res , next) => {
+        
+        const newUserData = {
+            name : req.body.name ,
+            email : req.body.email ,
+            role : req.body.role
+        }
+
+        const user = await Users.findByIdAndUpdate(req.params.id , newUserData , {
+            new : true ,
+            runValidators : true ,
+            useFindAndModify : false
+        })
+
+        if(!user){
+            return next(new apiErrorHandling(`User Doest not Exist with this ${req.params.id}` , 400))
+        }
+
+        res.status(200).json({
+            success : true , 
+        })
+
+    }) ,
+
+    // for Admin
+   deleteUser : asyncErrorHandler(async(req , res , next) => { 
+        
+        const user = await Users.findById(req.params.id)
+
+        if(!user){
+            return next(new apiErrorHandling(`User Doest not Exist with this ${req.params.id}` , 400))
+        }
+
+        await user.remove()
+
+        res.status(200).json({
+            success : true , 
+        })
+
+    }) ,
 }
 
 module.exports = userFunctions
