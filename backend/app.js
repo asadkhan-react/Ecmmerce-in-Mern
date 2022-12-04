@@ -9,6 +9,7 @@ app.use(cookieParser())
 // Routes
 app.use('/api/v1' , require('./routes/productRoutes'))
 app.use('/api/v1' , require('./routes/userRoutes'))
+app.use('/api/v1' , require('./routes/orderRoutes'))
 
 // Middleware for Error
 app.use(errorMiddleware)

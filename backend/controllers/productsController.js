@@ -143,18 +143,12 @@ const productFunctions = {
     deleteReview : asyncErrorHandler(async(req , res , next) =>{
 
         const product = await Product.findById(req.query.productid)
-        // mene req.query se product ki id le li
 
         if(!product){
             return next(new responseError("Product does not exist" , 404))
         }
-        // product na milne per ye response aae ga,
 
         const reviews = product.reviews.filter(rev => rev._id.toString() !== req.query.id)
-        // yahan mene filter ka method istimal kia product k reviews k lie ,
-        // yahan mene btaya k muje wo reviews dikhao , jin ki id req.query.id k equal na ho
-        // ab mene jo b id di ho gi review ki ,  wo review chor ker baki sab reviews muje dikhen ge,
-        // ab muje jaldi se is filter ko database me save ker dena he
 
         let avg = 0
 
@@ -164,7 +158,6 @@ const productFunctions = {
         })
 
         const ratingsAverage = avg / product.reviews.length
-
         const numofReviews = reviews.length
 
         await Product.findByIdAndUpdate(req.query.productid , {
